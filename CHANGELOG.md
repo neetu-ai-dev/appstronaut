@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 — 2026-09-25
+
+- **Works in any coding agent**: Claude Code, Codex CLI, Cursor, Gemini CLI and GitHub Copilot.
+  The docs name capabilities (ask the user, fetch a page, drive the browser) and map them to
+  each agent's tools.
+- `install.sh` links the skill into `~/.claude/skills` and `~/.agents/skills` (`--project`, `--copy`).
+- `AGENTS.md` for agents that open the repo itself.
+- Shorter skill description, within the Agent Skills 1024-character limit.
+
 ## 1.0.0 — 2026-09-25
 
 First public release.

@@ -1,4 +1,4 @@
-# Console steps no API reaches — browser (Claude in Chrome)
+# Console steps no API reaches — browser
 
 Stage F of the pipeline. Everything else is filled by `asc-fill.mjs` / `play-fill.mjs`; do those
 first so the browser work is short. Answers come from `store-config.json` → `declarations`.
@@ -6,14 +6,15 @@ Record every answer in `store-assets/CONSOLE-WALKTHROUGH.md` as you go.
 
 ## Running the browser part
 
-- The Chrome tools exist only in a session started with `claude --chrome` (or `/chrome`
-  connected). A VS Code / desktop session without them can't do this stage — hand the human
-  the exact command and a paste-ready prompt naming this file and the store-config.
+- Needs a browser the agent can drive, signed in as the human: Claude Code with Chrome
+  (`claude --chrome` or `/chrome`), a Playwright / browser MCP server in Codex, Cursor, Gemini
+  CLI or Copilot, or any computer-use tool. No browser tool? Hand the human this file and the
+  store-config as a click list; every answer below is written so a person can follow it.
 - One tab per console; close everything else in that Chrome window. Play Console pages are
   heavy — on a low-RAM Mac the renderer wedges ("every screenshot/read injection times out").
-  Recovery: stop, have the human quit Chrome (Cmd+Q), reopen, resume from the walkthrough.
+  Recovery: stop, have the human quit the browser completely, reopen, resume from the walkthrough.
   Don't hammer a frozen tab (20 failed attempts taught nothing).
-- **File uploads may be blocked** by the extension ("needs a desktop-app update"). Never plan
+- **File uploads may be blocked** by the browser tool ("needs a desktop-app update"). Never plan
   on browser uploads: images go through `asc-fill --screenshots` / `play-fill --images`, or a
   drag-and-drop list for the human.
 - Screenshot-verify every click. Play modals swallow the first click and layout shifts

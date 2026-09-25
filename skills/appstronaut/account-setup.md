@@ -1,6 +1,6 @@
 # Stage 0 — Developer accounts & app registration (from zero)
 
-> **Consoles change. VERIFY LIVE before quoting fees/steps to the user.** Fees, thresholds, and button labels below were accurate **June 2026** (sources at bottom). Before walking a user through, the LLM should `WebFetch` the relevant official page (linked) and reconcile — treat this doc as a baseline, not gospel. Flag anything that drifted.
+> **Consoles change. VERIFY LIVE before quoting fees/steps to the user.** Fees, thresholds, and button labels below were accurate **June 2026** (sources at bottom). Before walking a user through, the agent should fetch the relevant official page (linked) and reconcile — treat this doc as a baseline, not gospel. Flag anything that drifted.
 
 Decide first: **does the user already have a developer account?**
 - **No account** → Path A (enroll), then Path B (register app).

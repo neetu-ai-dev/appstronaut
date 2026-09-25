@@ -8,7 +8,7 @@
       "name": "appstronaut",
       "source": ".",
       "description": "Screenshots, store listings, rejection preflight, builds and submission for the App Store and Google Play: one intake, then autopilot.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "mobile"
     }
   ]

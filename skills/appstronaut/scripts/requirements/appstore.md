@@ -2,7 +2,7 @@
 
 Everything you must supply to ship an app. Two blocks: **(A) Screenshots/media** and **(B) Text & metadata**. Sizes verified for current App Store Connect (iOS/iPadOS 18 era, Xcode 26).
 
-> **Sizes drift as Apple ships devices.** Before capturing, `WebFetch` the live spec and reconcile with the tables below (fallback): https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/ — prefer the **largest** current iPhone/iPad; Apple scales down. `devices.sh` auto-picks the newest available models.
+> **Sizes drift as Apple ships devices.** Before capturing, fetch the live spec and reconcile with the tables below (fallback): https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/ — prefer the **largest** current iPhone/iPad; Apple scales down. `devices.sh` auto-picks the newest available models.
 
 ---
 

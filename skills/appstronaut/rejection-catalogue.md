@@ -211,13 +211,13 @@ The app in brackets in the Store column is where the row was learned: **fitness*
 - **Screenshot order** can be fixed after the fact: `PATCH /v1/appScreenshotSets/{id}/relationships/appScreenshots`
   with the screenshot ids in the wanted order.
 
-**Browser automation (Claude in Chrome)**
-- File upload can be blocked by the extension ("needs a desktop-app update") → upload images via the store APIs, or hand the human a drag list.
+**Browser automation (any agent)**
+- File upload can be blocked by the browser tool ("needs a desktop-app update") → upload images via the store APIs, or hand the human a drag list.
 - Agreement / Terms checkboxes (IARC, Developer Program Policies) are the human's call — ask first.
 
 ## Verify live before trusting (these drift)
 
-Fees, thresholds, pixel sizes, button labels (WebFetch the official pages); the app record's own
+Fees, thresholds, pixel sizes, button labels (fetch the official pages); the app record's own
 screenshot slots; Google's closed-test numbers and the account type; Apple age-rating questions;
 the EAS image vs Apple's minimum SDK; the Play service-account flow; tenant feature flags; demo
 credentials on production; listing URLs; production API; every console field after saving; the

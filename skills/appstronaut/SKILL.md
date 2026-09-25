@@ -1,11 +1,27 @@
 ---
 name: appstronaut
-description: End-to-end mobile app publishing wizard and automation pipeline. One intake round of questions, then it fills every App Store Connect and Google Play form through the store APIs (browser only for the gaps), runs a rejection pre-flight built from every past rejection, captures screenshots, and builds — stopping only for passwords, agreements, 2FA and the final Submit. Starts from zero — guides Apple Developer Program + Google Play Console enrollment (or app registration if accounts exist), then auto-detects any mobile project (Expo/EAS, bare React Native, Flutter, native iOS/Android), lists every required screenshot + metadata field, captures screenshots automatically on simulators/emulators (saved into the project), builds via EAS/native, walks testing (TestFlight / Play closed test) and production release. Offers options at each stage plus an autonomous mode. Re-verifies live consoles since they change. Use when the user wants a developer account, to register/create an app, prepare store screenshots, gather store requirements, build, test, or publish to the iOS App Store or Google Play.
+description: Ship a mobile app to the iOS App Store and Google Play end to end. One round of intake questions, then it fills App Store Connect and Play Console through their APIs (browser only for the gaps), runs a rejection preflight built from real rejections, captures store screenshots on simulators/emulators, builds, uploads and (when asked) submits for review. Covers developer-account enrollment, app registration, TestFlight / Play testing and production release for Expo/EAS, React Native, Flutter and native iOS/Android. Stops only for passwords, agreements, 2FA and the final Submit. Use when the user wants to publish, prepare store screenshots or listings, gather store requirements, or fix a store rejection.
 ---
 
 # appstronaut
 
 A staged wizard to take a mobile app from **nothing → live on the stores**. You (the LLM) are the brain; thin scripts are the hands. `SKILL_DIR` = this file's directory.
+
+## Works in any agent
+
+This skill is plain markdown plus shell / Node scripts, so any coding agent that can run commands
+can follow it (Claude Code, Codex CLI, Cursor, Gemini CLI, GitHub Copilot). Where it names a
+capability, use your agent's equivalent:
+
+| The skill says | Claude Code | Other agents |
+|---|---|---|
+| **ask the user** (intake, checkpoints) | `AskUserQuestion` | your question tool, else a numbered list in chat with the recommended answer first — then wait |
+| **fetch a page** (live specs, fees) | `WebFetch` | your web / fetch tool, else `curl -sL <url>` |
+| **drive the browser** (console-only steps) | Chrome (`claude --chrome`) | a Playwright / browser MCP server or computer-use tool, else hand the human `console-browser.md` as a click list |
+| **run a script** | Bash | your shell tool |
+
+Host: **macOS** (Xcode for iOS simulators and uploads; Android SDK for emulators). Node 18+ for
+`scripts/store/`.
 
 ## Pipeline mode — "fill everything for me" (preferred)
 
@@ -20,7 +36,7 @@ A Intake ─▶ B Profile ─▶ C Preflight(setup) ─▶ D Assets ─▶ E API
 
 | Stage | What runs | Reference |
 |---|---|---|
-| **A Intake** | One round of AskUserQuestion (≤12 questions), pre-filled from the repo → `store-assets/store-config.json` | `intake.md` |
+| **A Intake** | One round of questions (≤12; see *Works in any agent*), pre-filled from the repo → `store-assets/store-config.json` | `intake.md` |
 | **B Profile** | Derive permissions, SDKs, data types, tablet support, UGC, payments **from code** (never ask) → `declarations` in store-config; show the human once | `scripts/requirements/app-profile.md` |
 | **C Preflight** | `node scripts/store/preflight.mjs --config …` — fix every FAIL before touching a console | `rejection-catalogue.md` |
 | **D Assets** | Icons, feature graphic, listing copy (≤ limits), screenshots (Stage 5 below; one simulator at a time) | Stage 5, `android-screenshots-fallback.md` |
@@ -43,8 +59,8 @@ A Intake ─▶ B Profile ─▶ C Preflight(setup) ─▶ D Assets ─▶ E API
 
 **Credentials** (env only, never in repo or config): `ASC_KEY_ID`, `ASC_ISSUER_ID`,
 `ASC_KEY_FILE`, `PLAY_KEY_FILE`. Keys already on this machine for other apps in the same team
-usually work across apps — ask the human before using them (reading key files trips the
-credential-exploration guard in auto mode).
+usually work across apps — ask the human before using them (agents with a permission guard
+may block reading key files until the human allows it).
 
 **Machine constraints** (laptops with little free RAM/disk — see Environment notes): one simulator/emulator at a time,
 never alongside a build; check free disk first; exFAT project drives must build from an APFS copy.
@@ -66,7 +82,7 @@ Then find the user's position on the roadmap and start at the right stage (don't
 > graphic-asset specs in `scripts/requirements/*.md` were re-verified 2026-07-25** and three
 > values had drifted (iPhone 6.9" is 1260 × 2736 not 1320 × 2868; iPad 11" is 1488 × 2266;
 > Play wants min 4 tablet shots at 1080–7680px). Everything else is still baseline. Before
-> quoting any fee, threshold, pixel size, or button label, `WebFetch` the official page
+> quoting any fee, threshold, pixel size, or button label, fetch the official page
 > linked in the doc and reconcile. Tell the user if something drifted — and when you find
 > drift, **write the correction back into the reference doc** so the next run starts right.
 
@@ -135,7 +151,7 @@ headline feature is paid is a Guideline 2.3.1 problem).
 ### 2b. Then write REQUIREMENTS.md
 Read `SKILL_DIR/scripts/requirements/appstore.md` + `playstore.md`. Write `<project-dir>/store-assets/REQUIREMENTS.md`: pre-fill detected values, list what the user must still provide (description, keywords, privacy URL, demo login, feature graphic…), split **APPLE** / **GOOGLE**, with exact screenshot pixel sizes. Surface blanks now so they can gather them while builds run.
 
-**Sizes change — verify live.** Those pixel sizes are a baseline. `WebFetch` Apple's screenshot-specifications page + Google's graphic-asset specs (URLs at the top of each requirements doc) and reconcile before locking a size set. `devices.sh` (Stage 5) already targets the **largest current device** per class — the robust default, since Apple scales down from the biggest.
+**Sizes change — verify live.** Those pixel sizes are a baseline. Fetch Apple's screenshot-specifications page + Google's graphic-asset specs (URLs at the top of each requirements doc) and reconcile before locking a size set. `devices.sh` (Stage 5) already targets the **largest current device** per class — the robust default, since Apple scales down from the biggest.
 
 ---
 
@@ -268,7 +284,7 @@ lifecycle; `release.mjs` chains them). Use those rather than rewriting.
 - EAS = cloud builds, no local Xcode/Android Studio needed. Build numbers via `autoIncrement` / `appVersionSource: remote`.
 - **exFAT project drives** (external SSDs formatted for Mac + Windows): macOS writes `._*` AppleDouble files beside every file a build creates — CocoaPods reads them as podspecs, Gradle's instrumentation/dex steps crash on them. Build from an APFS copy (`rsync -a --exclude node_modules --exclude ios --exclude android --exclude '._*'` into the scratchpad, `pnpm install --frozen-lockfile` hardlinks from the store). Android emulator images can't live on exFAT either (the snapshot lock hangs forever).
 - **Disk**: an emulator needs ~7.4 GB free on the internal disk regardless of `-partition-size`; a Release iOS build ~3 GB DerivedData. Check `df -h /private/tmp` first; ask before clearing caches (`~/.gradle/caches`, CocoaPods, npm).
-- **`/private/tmp` (the scratchpad) is wiped on reboot** — keep built `.apk`/`.ipa` and helper APKs somewhere durable (e.g. the project's gitignored `.cache/`).
+- **`/tmp` (and most agents' scratch folders) is wiped on reboot** — keep built `.apk`/`.ipa` and helper APKs somewhere durable (e.g. the project's gitignored `.cache/`).
 - **Maestro 2.10**: `takeScreenshot` refuses paths outside its own run directory — pass a relative `OUT` and copy from `~/.maestro/tests/<run>/…/takeScreenshot/`. iOS: the "Save Password?" prompt appears late after sign-in (wait up to 8 s, tap "Not Now"); on iPad it's a system dialog Maestro can't read — tap by point. Tiles expose one accessibility label ("Name, Status, …"), not child text — match on that. `hideKeyboard` is unreliable; submit with `pressKey: Enter`. Fresh-booted sims drop keystrokes — sleep 30 s after boot and wrap sign-in in a retry that asserts the typed email.
 - **Maestro on Android emulators** often never starts its driver → use the adb recipe (`android-screenshots-fallback.md`): `am start -n <pkg>/.MainActivity` (monkey is unreliable), uiautomator only lists on-screen nodes (swipe to reach below-the-fold buttons), Android reports text-transformed labels in caps, screencap PNGs are RGBA (flatten for Play), System UI demo mode for a 9:41 status bar. Size AVDs for Play's 9:16 (phone 1080×1920 @420; tablet 1440×2560 @280 so the dp width clears the app's tablet breakpoint).
 - **Clean status bars**: iOS `xcrun simctl status_bar <udid> override --time 9:41 --batteryState charged --batteryLevel 100`; Android `am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0941` (after `settings put global sysui_demo_allowed 1`).

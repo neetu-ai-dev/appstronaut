@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-6C4DF6"></a>
-  <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude%20Code-skill%20%2B%20plugin-FF7AC6">
+  <img alt="Agent Skill" src="https://img.shields.io/badge/Agent%20Skill-Claude%20%C2%B7%20Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20Copilot-FF7AC6">
   <img alt="Expo, React Native, Flutter, native" src="https://img.shields.io/badge/Expo%20%C2%B7%20RN%20%C2%B7%20Flutter%20%C2%B7%20native-supported-7CE0C3">
   <img alt="zero deps" src="https://img.shields.io/badge/store%20scripts-zero%20deps-FFB347">
 </p>
@@ -13,7 +13,7 @@
 
 **Store submission, but make it one chat.**
 
-appstronaut is a [Claude Code](https://claude.com/claude-code) skill that takes a mobile app from
+appstronaut is an agent skill for Claude Code, Codex, Cursor, Gemini CLI and Copilot that takes a mobile app from
 "it runs on my phone" to **in review on the App Store and Google Play**. It asks its questions
 once, then handles the rest: screenshots, listings, privacy forms, age ratings, reviewer
 notes, builds, uploads and the submit. It only stops for the things a robot shouldn't do for
@@ -53,29 +53,37 @@ Progress is saved to `store-assets/launch-state.json`, so if your laptop dies mi
 Prefer a slower pace? There's also a **staged wizard** (accounts → detect → requirements →
 build → test → screenshots → store content → production) with options at every step.
 
-## 🚀 Install
+## 🚀 Install — works in every major coding agent
 
-**As a plugin (recommended):**
+It's a standard [Agent Skill](https://agentskills.io) (`SKILL.md` + scripts), so one install
+covers them all:
+
+```bash
+git clone https://github.com/neetu-ai-dev/appstronaut.git
+cd appstronaut && ./install.sh          # --project for one repo only, --copy to copy instead of link
+```
+
+That links the skill into `~/.claude/skills` and `~/.agents/skills`. `git pull` updates it.
+
+| Agent | Reads the skill from | Start it |
+|---|---|---|
+| **Claude Code** | `~/.claude/skills` (or the plugin below) | `/appstronaut` |
+| **Codex CLI** | `~/.agents/skills` | `$appstronaut` |
+| **Cursor** | `~/.agents/skills` | `/appstronaut` |
+| **Gemini CLI** | `~/.agents/skills` | just ask; approve the skill when prompted |
+| **GitHub Copilot** | `~/.agents/skills` | just ask in agent mode |
+
+Or just say *"get this app on both stores"*. Every agent picks the skill up from its description.
+
+**Claude Code plugin, if you prefer:**
 
 ```
 /plugin marketplace add neetu-ai-dev/appstronaut
 /plugin install appstronaut@appstronaut-marketplace
 ```
 
-**As a plain skill:**
-
-```bash
-git clone https://github.com/neetu-ai-dev/appstronaut.git
-ln -s "$PWD/appstronaut/skills/appstronaut" ~/.claude/skills/appstronaut
-```
-
-Then, in Claude Code, from your app's repo:
-
-```
-/appstronaut
-```
-
-or just say *"get this app on both stores"*.
+> **macOS only for now.** iOS simulators, Xcode and Apple's upload tools only run on macOS.
+> Windows and Linux support is on the roadmap.
 
 ## 🧰 What you need
 
@@ -122,8 +130,10 @@ node $S/release.mjs --ipa app.ipa --aab app.aab --submit   # …and send for rev
 ## 📚 What's inside
 
 ```
+install.sh                      one install for every agent
+AGENTS.md                       notes for agents working on this repo
 skills/appstronaut/
-  SKILL.md                      the brain: pipeline + staged wizard
+  SKILL.md                      the brain: pipeline + staged wizard + tool map for any agent
   intake.md                     the questions + store-config.json schema
   rejection-catalogue.md        92 failure modes → the check for each
   console-browser.md            the console-only clicks, in the order the consoles need
@@ -147,7 +157,7 @@ skills/appstronaut/
   the docs.
 - The pipeline makes real changes to real store records. Read the dry-run output before
   `--apply`. Uploads replace existing screenshot sets.
-- Not affiliated with Apple, Google or Anthropic. App Store and Google Play are trademarks of
+- Not affiliated with Apple, Google, Anthropic, OpenAI, Cursor or GitHub. App Store and Google Play are trademarks of
   their owners.
 
 ## 🤝 Contributing

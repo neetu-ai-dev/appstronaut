@@ -1,7 +1,7 @@
 {
   "name": "appstronaut",
   "description": "Ship a mobile app to the App Store and Google Play from one chat. One round of questions, then it captures screenshots, fills both store consoles through their APIs, runs a preflight built from real rejections, builds, uploads and (if you opt in) submits for review. Expo/EAS, React Native, Flutter, native iOS/Android.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": { "name": "Deepak Bisht", "url": "https://github.com/neetu-ai-dev" },
   "homepage": "https://github.com/neetu-ai-dev/appstronaut",
   "repository": "https://github.com/neetu-ai-dev/appstronaut",

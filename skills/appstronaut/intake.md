@@ -13,7 +13,10 @@ marketing site config, and any existing `store-assets/`. Pre-fill every question
 show the human your guess as the first (Recommended) option. If an earlier store-config.json
 exists, only ask about blanks.
 
-## The questions (AskUserQuestion, at most 4 per call — three calls)
+## The questions (three batches of up to 4)
+
+Claude Code: `AskUserQuestion`, one call per batch. Other agents: their question tool if they have
+one, otherwise post each batch as a numbered list with the recommended answer first and wait.
 
 **Call 1 — identity (permanent choices first)**
 1. **App name** — the exact store title on both stores. Default: `expo.name`. Warn that a

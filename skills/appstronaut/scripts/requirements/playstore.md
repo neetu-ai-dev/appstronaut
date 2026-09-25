@@ -2,7 +2,7 @@
 
 Two blocks: **(A) Graphics/screenshots** and **(B) Text & metadata + release data**. Sizes verified for current Play Console.
 
-> **Specs drift.** Before capturing, `WebFetch` the live graphic-asset spec and reconcile with below (fallback): https://support.google.com/googleplay/android-developer/answer/9866151
+> **Specs drift.** Before capturing, fetch the live graphic-asset spec and reconcile with below (fallback): https://support.google.com/googleplay/android-developer/answer/9866151
 
 ---
 

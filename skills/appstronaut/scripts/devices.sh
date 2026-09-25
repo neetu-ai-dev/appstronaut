@@ -6,7 +6,7 @@
 # FUTURE-PROOF: picks the LARGEST current device of each class dynamically (Apple only requires the
 # biggest screen and scales down). Apple's required size is whatever the newest iPhone Pro Max /
 # largest iPad produce — so we detect the highest model available rather than hardcoding "6.5 inch".
-# The skill should ALSO WebFetch Apple/Google's live screenshot-spec pages and reconcile (see SKILL.md).
+# The skill should ALSO fetch Apple/Google's live screenshot-spec pages and reconcile (see SKILL.md).
 set -uo pipefail
 MODE="${1:-list}"
 bold(){ printf "\033[1m%s\033[0m\n" "$1"; }
@@ -90,7 +90,7 @@ bold "→ .capture.env device lines:"
 [[ -n "$IOS_LINE" ]] && info "$IOS_LINE"
 [[ -n "$AND_LINE" ]] && info "$AND_LINE"
 echo
-info "NOTE: required pixel sizes change. Before capturing, WebFetch Apple + Google"
+info "NOTE: required pixel sizes change. Before capturing, fetch Apple + Google"
 info "spec pages (links in scripts/requirements/*.md) and confirm the current set."
 [[ "$MODE" != "ensure" ]] && { echo; bold "Run 'devices.sh ensure' to auto-create any missing devices."; }
 exit 0
