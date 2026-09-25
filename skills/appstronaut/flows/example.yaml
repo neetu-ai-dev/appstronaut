@@ -1,0 +1,36 @@
+# store-shots Maestro flow template — copy to flows/<yourapp>.yaml
+# Runs identically on iOS sim + Android emulator.
+# Injected env (from capture.sh): ${APP_ID} ${OUT} ${USER} ${PASS}
+#
+# Screenshots go to ${OUT}/NN_name.png — capture.sh sets ${OUT} per device,
+# so the SAME flow yields each store size by booting different devices.
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: false
+
+# ── Optional login (delete this block if app has no auth) ──────────────────
+# - tapOn: "Email"
+# - inputText: ${USER}
+# - tapOn: "Password"
+# - inputText: ${PASS}
+# - hideKeyboard
+# - tapOn: "Sign In"
+# - waitForAnimationToEnd
+
+# ── Screen 1 ───────────────────────────────────────────────────────────────
+- takeScreenshot: ${OUT}/01_home
+- waitForAnimationToEnd
+
+# ── Screen 2 — navigate then shoot ─────────────────────────────────────────
+# Prefer tapOn text/id (stable across device sizes) over coordinates.
+# - tapOn: "Requests"
+# - waitForAnimationToEnd
+# - takeScreenshot: ${OUT}/02_requests
+
+# ── Screen 3 ───────────────────────────────────────────────────────────────
+# - tapOn: "Analytics"
+# - waitForAnimationToEnd
+# - takeScreenshot: ${OUT}/03_analytics
+
+# Repeat for as many store screens as you need (App Store ≤10, Play ≤8).

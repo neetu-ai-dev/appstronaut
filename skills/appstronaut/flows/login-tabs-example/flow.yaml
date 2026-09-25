@@ -1,0 +1,116 @@
+# Store screenshots — Maestro flow (iOS sims + Android emulators).
+# Data: the fictional "Demo Co" tenant from `pnpm seed:demo` — never a real client.
+# Re-run the seed just before capturing: live tiles go "No signal" 2 minutes after it.
+# Injected env: ${APP_ID} ${OUT} ${DEMO_USER} ${DEMO_PASS} ${VERIFY_HEAT} ${NOTNOW_AT} (supervisor login — sees the Approve tab).
+# Read-only: opens sheets but never saves, approves or sends anything back.
+appId: ${APP_ID}
+---
+# Typing drops characters while a freshly booted simulator is busy, so the whole sign-in
+# retries from a clean launch until the email reads back exactly — before and after the
+# password, so nothing typed for the password landed in the email field.
+- retry:
+    maxRetries: 3
+    commands:
+      - launchApp:
+          clearState: true
+      - extendedWaitUntil:
+          visible: "Sign in"
+          timeout: 30000
+      - tapOn: "operator@example.com"
+      - waitForAnimationToEnd
+      - inputText: ${DEMO_USER}
+      - assertVisible: ${DEMO_USER}
+      - tapOn:
+          text: "Password"
+          index: 1   # 0 is the field label, 1 the input's placeholder
+      - waitForAnimationToEnd
+      - inputText: ${DEMO_PASS}
+      - assertVisible: ${DEMO_USER}
+- pressKey: Enter   # submits from the password field (hideKeyboard is unreliable on iOS)
+- extendedWaitUntil:   # iOS "Save Password?" prompt — can appear a few seconds late
+    visible: "Not Now"
+    timeout: 8000
+    optional: true
+- tapOn:
+    text: "Not Now"
+    optional: true
+# On iPad the prompt is a system dialog Maestro can't read, so capture-ios.sh passes the
+# "Not Now" button's position for that device.
+- runFlow:
+    when:
+      true: ${NOTNOW_AT != ''}
+    commands:
+      - extendedWaitUntil:   # Maestro has no sleep: a 6 s pause for the late prompt
+          visible: "zz-never-present"
+          timeout: 6000
+          optional: true
+      - tapOn:
+          point: ${NOTNOW_AT}
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "Melt Shop"
+    timeout: 30000
+- waitForAnimationToEnd
+
+# 1 — Floor: every shop, live tiles
+- takeScreenshot: ${OUT}/01_floor
+
+# 2 — Live heat on IF-01
+- retry:   # on iPad the first tap after the system prompt can be swallowed
+    maxRetries: 2
+    commands:
+      - tapOn: "Induction Furnace 1,.*"
+      - extendedWaitUntil:
+          visible: "Machine figures"
+          timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/02_heat_live
+- retry:   # iPad sometimes swallows the first tap on Back
+    maxRetries: 2
+    commands:
+      - tapOn: "Back"
+      - extendedWaitUntil:
+          visible: "Melt Shop"
+          timeout: 8000
+
+# 3 — Heats list
+- tapOn: "Heats"
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/03_heats
+
+# 4 — Approve queue (supervisor)
+- tapOn: "Approve"
+- extendedWaitUntil:
+    visible: "Send back"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/04_approve
+
+# 5 — Closed heat awaiting sign-off: machine figures to verify
+- tapOn: "(?s).*${VERIFY_HEAT}.*"   # closed heat with unchecked machine figures (capture-ios.sh)
+- extendedWaitUntil:
+    visible: "Machine figures"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/05_verify
+
+# 6 — Correction keypad (closed without saving)
+- tapOn:
+    text: "Correct"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/06_keypad
+# Restart instead of navigating back: the sheet's close animation leaves "Back" unreachable
+# for Maestro. The session is kept, so the app reopens on the Floor tab. Nothing was saved.
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: "Melt Shop"
+    timeout: 30000
+
+# 7 — Monitoring-only machine: live values
+- tapOn: "Moulding Line"
+- tapOn: "Screw Compressor.*"
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/07_machine

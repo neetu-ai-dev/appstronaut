@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-label="appstronaut: ship your app to both stores from one chat">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B0A1F"/>
+      <stop offset="1" stop-color="#241A4F"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF7AC6" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FF7AC6"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C9B8FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="420" rx="28" fill="url(#sky)"/>
+  <g fill="#FFFFFF">
+    <circle cx="90" cy="70" r="2" opacity=".7"/><circle cx="210" cy="340" r="1.5" opacity=".5"/>
+    <circle cx="380" cy="60" r="1.5" opacity=".6"/><circle cx="1180" cy="80" r="2" opacity=".7"/>
+    <circle cx="1060" cy="360" r="1.5" opacity=".5"/><circle cx="700" cy="380" r="1.5" opacity=".4"/>
+    <circle cx="960" cy="40" r="1.2" opacity=".6"/><circle cx="560" cy="30" r="1.2" opacity=".5"/>
+    <circle cx="1230" cy="250" r="1.5" opacity=".6"/><circle cx="40" cy="220" r="1.2" opacity=".5"/>
+  </g>
+  <path d="M820 330 Q 930 250 1010 150" stroke="url(#trail)" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <g transform="translate(1010 150) rotate(40)">
+    <path d="M0 -58 C 22 -34 22 10 14 34 L -14 34 C -22 10 -22 -34 0 -58 Z" fill="#FFFFFF"/>
+    <circle cx="0" cy="-12" r="9" fill="#6C4DF6"/>
+    <path d="M-14 16 L -30 40 L -14 34 Z M14 16 L 30 40 L 14 34 Z" fill="#FF7AC6"/>
+    <path d="M-8 36 L 0 58 L 8 36 Z" fill="#FFB347"/>
+  </g>
+  <text x="80" y="200" font-family="ui-rounded, 'SF Pro Rounded', 'Segoe UI', system-ui, sans-serif" font-size="92" font-weight="800" fill="url(#word)">appstronaut</text>
+  <text x="84" y="258" font-family="ui-sans-serif, 'Segoe UI', system-ui, sans-serif" font-size="30" fill="#C9B8FF">ship your app to the App Store + Google Play from one chat</text>
+  <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="20" fill="#0B0A1F" text-anchor="middle">
+    <rect x="84" y="296" width="180" height="40" rx="20" fill="#C9B8FF"/><text x="174" y="323">screenshots</text>
+    <rect x="276" y="296" width="144" height="40" rx="20" fill="#FF7AC6"/><text x="348" y="323">listings</text>
+    <rect x="432" y="296" width="156" height="40" rx="20" fill="#FFB347"/><text x="510" y="323">preflight</text>
+    <rect x="600" y="296" width="120" height="40" rx="20" fill="#7CE0C3"/><text x="660" y="323">submit</text>
+  </g>
+</svg>

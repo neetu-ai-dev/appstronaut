@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+node_modules/
+store-assets/
+CONTEXT.md
+._*
