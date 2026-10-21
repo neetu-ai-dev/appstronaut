@@ -6,6 +6,8 @@
 // Dry run by default: reads current state and prints what it WOULD change. --apply writes.
 // Steps (use --only to run a subset): bundle, app, info, age, version, listing, price,
 // availability, review, screenshots (screenshots also need --screenshots — they replace the set).
+// For an update, `version` creates store-config's app.version once every earlier version is live,
+// and `listing` sets What's New from the "## What's New in This Version — <version>" block.
 //
 // Not reachable through the public API (browser, see console-browser.md): creating the app
 // record, App Privacy. Never done here: submitting for review.
@@ -110,6 +112,18 @@ await step('age', async () => {
 await step('version', async () => {
   const vers = (await asc('GET', `/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=10`)).data;
   version = vers.find((v) => ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'].includes(v.attributes.appStoreState));
+  // An update: every version is live or in review, and store-config names a new one — create it.
+  if (!version && cfg.app.version && !vers.some((v) => v.attributes.versionString === cfg.app.version)) {
+    plan(!APPLY, `create iOS version ${cfg.app.version}`);
+    if (!APPLY) return;
+    version = one(await asc('POST', '/v1/appStoreVersions', {
+      data: {
+        type: 'appStoreVersions',
+        attributes: { platform: 'IOS', versionString: cfg.app.version, copyright: A.copyright, releaseType: A.releaseType || 'MANUAL' },
+        relationships: { app: { data: { type: 'apps', id: app.id } } },
+      },
+    }));
+  }
   if (!version) throw new Error(`No editable iOS version (states: ${vers.map((v) => `${v.attributes.versionString}:${v.attributes.appStoreState}`).join(', ')})`);
   const attrs = { versionString: cfg.app.version, copyright: A.copyright, releaseType: A.releaseType || 'MANUAL' };
   const changed = Object.fromEntries(Object.entries(attrs).filter(([k, v]) => v && version.attributes[k] !== v));
@@ -137,6 +151,9 @@ await step('listing', async () => {
     marketingUrl: cfg.urls.marketing,
   };
   for (const [k, v] of Object.entries(attrs)) if (!v) throw new Error(`listing field "${k}" missing from ${A.listingFile}`);
+  // Updates need "What's New"; it comes from the "## What's New in This Version — <version>" block.
+  const whatsNew = listingField(md, `What's New in This Version — ${version.attributes.versionString}`);
+  if (whatsNew) attrs.whatsNew = whatsNew;
   const changed = Object.fromEntries(Object.entries(attrs).filter(([k, v]) => loc.attributes[k] !== v));
   if (!Object.keys(changed).length) return log(`  ✓ ${loc.attributes.locale} listing already matches`);
   plan(!APPLY, `listing (${loc.attributes.locale}): ${Object.keys(changed).join(', ')}`);

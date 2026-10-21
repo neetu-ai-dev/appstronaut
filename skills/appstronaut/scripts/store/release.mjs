@@ -50,6 +50,10 @@ if (DO_IOS) {
   log(`  ipa: ${bundle} ${version} (${buildNumber})`);
 
   const auth = ['--apiKey', process.env.ASC_KEY_ID, '--apiIssuer', process.env.ASC_ISSUER_ID];
+  // altool only looks for AuthKey_<id>.p8 in ./private_keys, ~/private_keys, ~/.private_keys and
+  // ~/.appstoreconnect/private_keys unless API_PRIVATE_KEYS_DIR points at the key's folder.
+  const keyFile = process.env.ASC_KEY_PATH || process.env.ASC_KEY_FILE;
+  if (!process.env.API_PRIVATE_KEYS_DIR && keyFile) process.env.API_PRIVATE_KEYS_DIR = dirname(keyFile);
   log('  validating with altool (catches SDK / signing refusals eas submit hides)…');
   execFileSync('xcrun', ['altool', '--validate-app', '-f', IPA, '-t', 'ios', ...auth], { stdio: 'inherit' });
 
