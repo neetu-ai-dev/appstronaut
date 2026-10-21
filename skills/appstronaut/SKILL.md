@@ -31,7 +31,7 @@ wizard. It asks questions **once**, then works unattended. Progress lives in
 so a restarted session resumes where it stopped.
 
 ```
-A Intake ─▶ B Profile ─▶ C Preflight(setup) ─▶ D Assets ─▶ E API fill ─▶ F Browser fill ─▶ G Build ─▶ H Preflight(submit) ─▶ I Human handoff
+A Intake ─▶ B Profile ─▶ C Preflight(setup) ─▶ D Assets ─▶ E API fill ─▶ F Browser fill ─▶ F2 Push ─▶ G Build ─▶ H Preflight(submit) ─▶ I Human handoff
 ```
 
 | Stage | What runs | Reference |
@@ -42,6 +42,7 @@ A Intake ─▶ B Profile ─▶ C Preflight(setup) ─▶ D Assets ─▶ E API
 | **D Assets** | Icons, feature graphic, listing copy (≤ limits), screenshots (Stage 5 below; one simulator at a time) | Stage 5, `android-screenshots-fallback.md` |
 | **E API fill** | `asc-fill.mjs` then `play-fill.mjs` — dry run, read the plan, then `--apply` (`--screenshots`, `--images` to upload media) | `scripts/store/` |
 | **F Browser fill** | Only what no API reaches: create both app records, App Privacy, Play category / App content / countries | `console-browser.md` |
+| **F2 Push** | Only if the app sends push or opens website links: `apple-capabilities.mjs` (App ID capabilities + new profile), Firebase project + `google-services.json`, `fcm-key.sh`, then two `eas credentials` menus run by the human | `push-setup.md` |
 | **G Build** | Store builds (EAS production or local), `altool --validate-app` for iOS | `build-submit.md` |
 | **H Preflight** | `preflight.mjs --stage submit` — site, API and reviewer login must be live | `rejection-catalogue.md` |
 | **I Release** | `node scripts/store/release.mjs --ipa … --aab …` — preflight gate → altool validate + upload → wait for processing → asc-fill/play-fill → attach build → **submit** (only with `--submit` or store-config `"autoSubmit": true`, set only when the owner asked for automatic submission) | `scripts/store/release.mjs` |
