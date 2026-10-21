@@ -54,12 +54,12 @@ if (DO_IOS) {
   // ~/.appstoreconnect/private_keys unless API_PRIVATE_KEYS_DIR points at the key's folder.
   const keyFile = process.env.ASC_KEY_PATH || process.env.ASC_KEY_FILE;
   if (!process.env.API_PRIVATE_KEYS_DIR && keyFile) process.env.API_PRIVATE_KEYS_DIR = dirname(keyFile);
-  log('  validating with altool (catches SDK / signing refusals eas submit hides)…');
-  execFileSync('xcrun', ['altool', '--validate-app', '-f', IPA, '-t', 'ios', ...auth], { stdio: 'inherit' });
-
   const appId = cfg.apple.appId;
   const existing = await asc('GET', `/v1/builds?filter[app]=${appId}&filter[version]=${buildNumber}&filter[preReleaseVersion.version]=${version}&limit=1`);
   if (!existing.data.length) {
+    // Only before the first upload: once the build number is used, altool refuses it as a duplicate.
+    log('  validating with altool (catches SDK / signing refusals eas submit hides)…');
+    execFileSync('xcrun', ['altool', '--validate-app', '-f', IPA, '-t', 'ios', ...auth], { stdio: 'inherit' });
     log('  uploading…');
     execFileSync('xcrun', ['altool', '--upload-app', '-f', IPA, '-t', 'ios', ...auth], { stdio: 'inherit' });
   } else log('  build already uploaded');
@@ -108,7 +108,7 @@ if (DO_ANDROID) {
   const releaseStatus = SUBMIT ? 'completed' : 'draft';
   try {
     await withPlayEdit(PKG, async (edit) => {
-      const bundle = await play('POST', `${playUpload(PKG)}/edits/${edit}/bundles`, readFileSync(AAB), 'application/octet-stream');
+      const bundle = await play('POST', `${playUpload(PKG)}/edits/${edit}/bundles?uploadType=media`, readFileSync(AAB), 'application/octet-stream');
       log(`  uploaded versionCode ${bundle.versionCode}`);
       await play('PUT', `${playApi(PKG)}/edits/${edit}/tracks/production`, { track: 'production', releases: [{
         name: cfg.app.version, status: releaseStatus, versionCodes: [String(bundle.versionCode)],

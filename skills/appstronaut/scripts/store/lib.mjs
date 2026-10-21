@@ -138,11 +138,12 @@ export async function withPlayEdit(pkg, fn, { commit }) {
     }
     try {
       await play('POST', `${API}/edits/${edit.id}:commit`);
+      log('  Play edit committed and sent for review.');
     } catch (e) {
       if (!/changesNotSentForReview/.test(String(e))) throw e;
       await play('POST', `${API}/edits/${edit.id}:commit?changesNotSentForReview=true`);
+      log('  Play edit committed, NOT sent for review — Play Console → Publishing overview → Send for review.');
     }
-    log('  Play edit committed (not sent for review).');
     return out;
   } catch (e) {
     await play('DELETE', `${API}/edits/${edit.id}`).catch(() => {});
