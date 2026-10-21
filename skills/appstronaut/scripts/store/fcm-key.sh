@@ -2,7 +2,7 @@
 # Make the FCM V1 service-account key EAS needs for Android push, into the shared
 # credentials folder, for a Firebase project created in a Google Workspace organization.
 #
-#   fcm-key.sh <firebase-project-id> <name>      e.g.  fcm-key.sh railintel-cc744 railintel
+#   fcm-key.sh <firebase-project-id> <name>      e.g.  fcm-key.sh myapp-1a2b3 myapp
 #
 # Writes ~/Projects/Operations/credentials/google/<name>-fcm-service-account.json (mode 600)
 # and never prints it. Organizations created since 2024 enforce
