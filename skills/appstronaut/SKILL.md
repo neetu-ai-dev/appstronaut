@@ -216,6 +216,10 @@ Saves to `<project>/store-assets/{ios,android}/<label>/NN_*.png`. Verify dims (`
 > **White-label / per-client builds?** Keep a private companion pack (a separate skill or doc outside this repo) with the constants that carry across every client build: account of record, demo-tenant reviewer logins, UGC + Data-safety answers, pricing/IAP stance, the reviewer note. Use it for the values; use the steps below for the mechanics. Never put client credentials in this skill.
 >
 > **Login-only B2B / multi-tenant SaaS?** High risk of a first-submission **Guideline 3.2** rejection (Apple assumes an internal one-org tool). Pre-empt in App Review notes + supply a non-expiring demo login. Payment must stay **outside** the app (no IAP). Full playbook in `account-setup.md` → "Guideline 3.2" + "B2B SaaS payment model".
+> The other first-submission risk for these apps is **Guideline 4.2 (minimum functionality)**:
+> a login wall in front of read-only lists from the web product was rejected in Oct 2026. Ship
+> real native features in 1.0 (push, biometric unlock, quick actions, offline) and name them at
+> the top of the review notes. See `rejection-catalogue.md` E5.
 >
 > **Phone-OTP / SMS login? The demo account is a CODE change, not a form field.** Reviewers
 > cannot receive the user's SMS, so "demo phone + we'll text you a code" is unreviewable and

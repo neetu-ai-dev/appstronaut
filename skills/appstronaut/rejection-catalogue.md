@@ -6,12 +6,14 @@ a B2B logistics app, a field-ops app, an HR / workforce app and a multi-tenant s
 **[auto]**; the rest are judgement checks the pipeline asks you to confirm before submitting.
 
 **Real rejections on record:** fitness app A, Apple 1.0.1: 1.5, 3.2, 2.3.6 UGC (Aug 2026).
-Fitness app B, Apple 1.1.0: 5.1.1(ii) (Sep 2026). Logistics app, Apple: 3.2 on first
+Fitness app B, Apple 1.1.0: 5.1.1(ii) (Sep 2026). Procurement app (B2B, login-only), Apple
+1.0.0: **4.2 Minimum Functionality** (Oct 2026, 20 days in the queue, reviewed on an iPad Air
+although the app is iPhone-only). Logistics app, Apple: 3.2 on first
 submission (overturned); Play: "Privacy Policy link does not lead to the Privacy Policy page".
 Everything else is a trap we caught before a reviewer did.
 
 The app in brackets in the Store column is where the row was learned: **fitness**,
-**logistics**, **workforce** or **shop-floor**.
+**logistics**, **workforce**, **shop-floor** or **procurement**.
 
 ---
 
@@ -93,7 +95,7 @@ The app in brackets in the Store column is where the row was learned: **fitness*
 
 | # | Store / guideline | Failure | Check |
 |---|---|---|---|
-| B1 | Apple **3.1.1** | Paywall / price / subscribe UI in the iOS app. | **[auto]** grep app source for `subscribe\|upgrade\|pricing\|₹\|\$[0-9]\|buy now\|plan` in UI strings. |
+| B1 | Apple **3.1.1** | Paywall / price / subscribe UI in the iOS app. | **[auto]** grep app source for `subscribe\|upgrade\|pricing\|₹\|\$[0-9]\|buy now\|plan` in UI strings. False positive seen (procurement): "Per month" as a quantity label and "Order value per month" on a chart. Read each hit before acting; only "per month" beside an amount is a price. |
 | B2 | Apple 3.1.3 | Link-out to purchase from a buy context. | No pricing links in the app. |
 | B3 | Apple **3.1.3(c)/(e)** | "Why isn't this IAP?" | Notes: enterprise service sold to organisations (c) / in-person service (e). |
 | B4 | Apple agreements | Paid app without Paid Apps agreement. | Free apps need none. |
@@ -148,6 +150,7 @@ The app in brackets in the Store column is where the row was learned: **fitness*
 | E2 | Apple **3.2** (logistics) | Login-only B2B app read as one company's internal tool. | Notes: commercial multi-tenant product, many organisations, who uses it, no IAP. Fallback: Unlisted / Custom App. |
 | E3 | Apple 4.2.6 | Publishing on clients' behalf. | Say so in notes + distinct copy. |
 | E4 | Play identity | D-U-N-S mismatch. | Exact legal name/address. |
+| E5 | Apple **4.2** (procurement) | "Not sufficient content and features to be useful, unique, and app-like." The first build was a read-only viewer of the web product's lists behind a login. | Before the **first** submission, count native capabilities that actually work in the build: push notifications, Face ID / biometric unlock, swipe or quick actions, offline cache, share sheet, universal links, widgets, native tab bar. Fewer than three, plus screens that only list API rows, means expect 4.2: build them first. Ship the full app as 1.0, not a thin 1.0 with "the real one in 1.1". Open the reviewer notes with a short paragraph naming each native feature and where to find it. |
 
 ## 10. Account deletion
 
@@ -171,6 +174,25 @@ The app in brackets in the Store column is where the row was learned: **fitness*
 - `eas submit` hangs silently on Apple refusals — `altool --validate-app` first.
 - The ASC API `PATCH reviewSubmissions {submitted:true}` **is** the Submit button.
 - "Automatically release" was found selected — set `releaseType: MANUAL`.
+- **Rejection reason is not in the API.** The Resolution Center message (guideline, review
+  device, text) can only be read in the console. Ask the human to paste it, or read it in the
+  browser. The API shows only version `REJECTED` and submission `UNRESOLVED_ISSUES`.
+- **Resubmitting after a rejection** (procurement, Oct 2026): the rejected version stays
+  editable, and a never-released one can be renamed (asc-fill sets `versionString`, e.g. 1.0.0
+  → 1.1.0) and given a newer build. The rejected submission (`UNRESOLVED_ISSUES`) is reused.
+  Its item stays `REJECTED` until it is marked fixed, and until then every submit fails with 409
+  *"Version is not ready to be submitted yet, please try again later"* (that detail is only in
+  `errors[].meta.associatedErrors`; retrying for 25 minutes did not help). What worked: on the
+  version page click **Update Review** (the item turns *Ready for Review*), reply in the
+  Messages box, then **Resubmit to App Review**. Not yet tried by API: `PATCH
+  /v1/reviewSubmissionItems/{id}` with `resolved: true`, then `PATCH` the submission
+  `submitted: true`. Don't `POST` a new reviewSubmission: the item `POST` fails, and an empty
+  "Draft Submission" is left that the API can't cancel ("not in cancellable state").
+- Reply to the rejection in the same Messages box before resubmitting: say what changed, in
+  the reviewer's terms (guideline number, version and build).
+- **Version stuck in "Waiting for Review" for weeks** does not mean it's fine. The procurement app
+  waited 20 days, then got a 4.2 rejection. Apple won't create the next version while one is in
+  review, so a thin 1.0 holds every later release back.
 
 **Google Play**
 - **Draft-app rule:** a never-published app only accepts `status: draft` releases.

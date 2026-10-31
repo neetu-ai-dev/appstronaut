@@ -187,7 +187,7 @@ if (lock) {
 const src = [...walk(join(APP, 'app'), /\.(tsx?|jsx?)$/), ...walk(join(APP, 'src'), /\.(tsx?|jsx?)$/)];
 // Only user-visible text: string literals and JSX text — not identifiers like queue.subscribe().
 // "per month" alone is often a capacity or a chart label; it reads as a price only after an amount.
-const BUY = /\b(subscribe now|subscribe to|upgrade to|buy now|pricing plan|in-app purchase|unlock premium)\b|[₹$€£]\s?\d[\d,.]*\s*(?:per month|\/\s?month|\/mo\b)/i;
+const BUY = /\b(subscribe now|subscribe to|upgrade to|buy now|pricing plan|in-app purchase|unlock premium)\b|(?:[₹$€£]|\brs\.?|\binr|\busd)\s?[\d,.]+\s*(?:per month|\/\s?month|\/\s?mo\b)/i;
 const visible = (code) => [...code.matchAll(/(['"`])((?:(?!\1)[^\n\\]|\\.)*)\1|>([^<>{}\n]+)</g)].map((m) => m[2] ?? m[3] ?? '');
 const paywall = src.filter((f) => visible(readFileSync(f, 'utf8')).some((t) => BUY.test(t)));
 if (paywall.length && cfg.money !== 'iap') fail('B1', `purchase-like UI strings in: ${paywall.map((f) => f.replace(APP + '/', '')).join(', ')}`);
